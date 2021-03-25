@@ -8,7 +8,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = socket(server, {
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000/',
     methods: ['GET', 'POST'],
     credential: true,
     transport: ['websocket'],
