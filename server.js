@@ -51,6 +51,7 @@ app.post('/check_user', (req, res) => {
 
 io.on('connection', (socket) => {
   socket.on('JOIN', ({ roomId, name, userId }) => {
+    console.log("подключился"+ socket.id)
     socket.join(roomId);
     rooms.get(roomId).get('users').set(socket.id, {
       id: userId,
@@ -85,4 +86,5 @@ server.listen(9999, (err) => {
   if (err) {
     throw Error(err);
   }
+  console.log("соединение установлено")
 });
