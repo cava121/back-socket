@@ -26,6 +26,10 @@ app.use(function(req, res, next) {
 
 const rooms = new Map();
 
+app.get('/check', (req, res) => {
+  res.json('ok');
+});
+
 app.post('/data_room/:id', async (req, res) => {
   const roomId = req.params.id;
 
