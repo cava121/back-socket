@@ -92,7 +92,7 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(9999, (err) => {
+server.listen(80, (err) => {
   if (err) {
     throw Error(err);
   }
