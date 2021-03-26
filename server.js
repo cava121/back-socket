@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(9999, (err) => {
+server.listen(9999, "http://localhost:3000", (err) => {
   if (err) {
     throw Error(err);
   }
