@@ -8,7 +8,11 @@ const app = express();
 const server = require('http').Server(app);
 const io = socket(server, {
   cors: {
-    origin: 'http://localhost:3000/',
+    origin: [
+      'http://localhost:3000/',
+      'https://social-network-react.ru/',
+      'http://social-network-react.ru/',
+    ],
     methods: ['GET', 'POST'],
     credential: true,
     transport: ['websocket'],
@@ -18,17 +22,7 @@ const io = socket(server, {
 app.use(cors());
 app.use(express.json());
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000"); 
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
 const rooms = new Map();
-
-app.get('/check', (req, res) => {
-  res.json('ok');
-});
 
 app.post('/data_room/:id', async (req, res) => {
   const roomId = req.params.id;
@@ -61,7 +55,7 @@ app.post('/check_user', (req, res) => {
 
 io.on('connection', (socket) => {
   socket.on('JOIN', ({ roomId, name, userId }) => {
-    console.log("подключился"+ socket.id)
+    console.log('подключился' + socket.id);
     socket.join(roomId);
     rooms.get(roomId).get('users').set(socket.id, {
       id: userId,
@@ -96,5 +90,5 @@ server.listen(50, (err) => {
   if (err) {
     throw Error(err);
   }
-  console.log("соединение установлено")
+  console.log('соединение установлено');
 });
