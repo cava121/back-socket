@@ -8,11 +8,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = socket(server, {
   cors: {
-    origin: [
-      'http://localhost:3000/',
-      'https://social-network-react.ru/',
-      'http://social-network-react.ru/',
-    ],
+    origin: '*',
     methods: ['GET', 'POST'],
     credential: true,
     transport: ['websocket'],
@@ -23,6 +19,54 @@ app.use(cors());
 app.use(express.json());
 
 const rooms = new Map();
+
+app.get('/users', (req, res) => {
+  q.getUsers().then((users) => {
+    res.json(users);
+  });
+});
+
+app.post('/create_room', (req, res) => {
+  q.createRoom(req.body).then(() => {
+    res.json('ok');
+  });
+});
+
+app.post('/data_room', (req, res) => {
+  q.updateDataRoom(req.body).then(() => {
+    res.json('ok');
+  });
+});
+
+app.post('/delete_users', (req, res) => {
+  q.deleteUsers(req.body).then(() => {
+    res.json('ok');
+  });
+});
+
+app.post('/delete_room', (req, res) => {
+  q.deleteRoom(req.body).then(() => {
+    res.json('ok');
+  });
+});
+
+app.post('/create_user', (req, res) => {
+  q.createUser(req.body).then(() => {
+    res.json('ok');
+  });
+});
+
+app.post('/users', (req, res) => {
+  q.changeUserData(req.body).then(() => {
+    res.json('ok');
+  });
+});
+
+app.get('/rooms', (req, res) => {
+  q.getRooms().then((rooms) => {
+    res.json(rooms);
+  });
+});
 
 app.post('/data_room/:id', async (req, res) => {
   const roomId = req.params.id;
@@ -44,6 +88,11 @@ app.post('/room/:id', (req, res) => {
 
 app.post('/check_user', (req, res) => {
   q.check_user(req.body).then((response) => {
+    if (response == 'noAccess') {
+      return res.json({
+        error: 'Нет доступа для этой комнаты',
+      });
+    }
     if (!response.length) {
       return res.json({
         error: 'Неверный логин или пароль',
@@ -55,7 +104,6 @@ app.post('/check_user', (req, res) => {
 
 io.on('connection', (socket) => {
   socket.on('JOIN', ({ roomId, name, userId }) => {
-    console.log('подключился' + socket.id);
     socket.join(roomId);
     rooms.get(roomId).get('users').set(socket.id, {
       id: userId,
@@ -86,9 +134,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(50, (err) => {
+server.listen(9999, (err) => {
   if (err) {
     throw Error(err);
   }
-  console.log('соединение установлено');
 });
